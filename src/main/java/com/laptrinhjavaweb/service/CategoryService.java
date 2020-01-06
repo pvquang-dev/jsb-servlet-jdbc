@@ -1,5 +1,7 @@
 package com.laptrinhjavaweb.service;
 
-public interface CategoryService {
+import com.laptrinhjavaweb.dto.CategoryDTO;
 
+public interface CategoryService {
+	void insert(CategoryDTO dto);
 }

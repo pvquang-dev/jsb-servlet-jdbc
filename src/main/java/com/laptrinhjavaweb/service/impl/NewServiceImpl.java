@@ -25,4 +25,9 @@ public class NewServiceImpl  implements NewService {
 		}
 		return lstNew;
 	}
+
+	@Override
+	public void insert(NewDTO newdto) {
+		newRepository.insert(convert.convertDTOToEntity(newdto));
+	}
 }

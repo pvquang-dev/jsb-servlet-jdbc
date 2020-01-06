@@ -6,4 +6,6 @@ import com.laptrinhjavaweb.dto.NewDTO;
 
 public interface NewService {
 	List<NewDTO> findAll();
+
+	void insert(NewDTO newdto);
 }
