@@ -15,6 +15,4 @@ public class CategoryDTO {
 	public void setCode(String code) {
 		this.code = code;
 	}
-	
-	
 }

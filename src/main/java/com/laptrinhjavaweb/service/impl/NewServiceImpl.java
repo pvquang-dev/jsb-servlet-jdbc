@@ -10,27 +10,19 @@ import com.laptrinhjavaweb.repository.NewRepository;
 import com.laptrinhjavaweb.repository.impl.NewRepositoryImpl;
 import com.laptrinhjavaweb.service.NewService;
 	
-public class NewServiceImpl  implements NewService{
+public class NewServiceImpl  implements NewService {
 	
 	private NewRepository newRepository = new NewRepositoryImpl();
+	private NewConverter convert = new NewConverter();
 	
 	@Override
 	public List<NewDTO> findAll() {
 		List<NewDTO> lstNew = new ArrayList<>();
 		List<NewEntity> entities = newRepository.findAll();
 		for (NewEntity newEntity : entities) {
-			NewConverter convert = new NewConverter();
-			convert.convertEntityToDTO(newEntity);
+			NewDTO newdto = convert.convertEntityToDTO(newEntity);
+			lstNew.add(newdto);
 		}
 		return lstNew;
-	}
-
-	@Override
-	public NewDTO insert(NewDTO newDTO) {
-		NewDTO dto = new NewDTO();
-		dto.setContent(newDTO.getContent());
-		dto.setShortdescription(newDTO.getShortdescription());
-		NewEntity entity =  newRepository.save();
-		return dto;
 	}
 }

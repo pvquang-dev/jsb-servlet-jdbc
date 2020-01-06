@@ -39,9 +39,13 @@ public class ResultSetMapper<T> {
 					results.add(obj);
 				}
 			}
-		} catch (SQLException |  InstantiationException | IllegalAccessException e) {
+		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (InvocationTargetException e) {
+			e.printStackTrace();
+		} catch (InstantiationException e) {
+			e.printStackTrace();
+		} catch (IllegalAccessException e) {
 			e.printStackTrace();
 		}
 		return results;
