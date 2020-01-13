@@ -1,5 +1,8 @@
 package com.laptrinhjavaweb;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.laptrinhjavaweb.dto.CategoryDTO;
 import com.laptrinhjavaweb.dto.NewDTO;
 import com.laptrinhjavaweb.service.CategoryService;
@@ -24,5 +27,6 @@ public class EstateApplication {
 		newdto.setThumbnail("thumbnail");
 		newdto.setTitle("title");
 		newService.insert(newdto);
+		List<?> lst = new ArrayList<>();
 	}
 }
