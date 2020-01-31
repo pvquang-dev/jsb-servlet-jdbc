@@ -10,7 +10,7 @@ import java.util.List;
 
 import org.apache.commons.beanutils.BeanUtils;
 
-import com.laptrinhjavaweb.anotation.Colum;
+import com.laptrinhjavaweb.anotation.Column;
 import com.laptrinhjavaweb.anotation.Entity;
 
 public class ResultSetMapper<T> {
@@ -27,8 +27,8 @@ public class ResultSetMapper<T> {
 						String colName = data.getColumnName(i + 1);
 						Object colValue = resultSet.getObject(i + 1);
 						for(Field field : fields) {
-							if(field.isAnnotationPresent(Colum.class)) {
-								Colum column = field.getAnnotation(Colum.class);
+							if(field.isAnnotationPresent(Column.class)) {
+								Column column = field.getAnnotation(Column.class);
 								if(column.name().equals(colName)) {
 									BeanUtils.setProperty(obj, colName, colValue);
 									break;

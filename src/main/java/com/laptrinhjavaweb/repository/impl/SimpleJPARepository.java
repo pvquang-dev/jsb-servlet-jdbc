@@ -10,7 +10,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.laptrinhjavaweb.anotation.Colum;
+import com.laptrinhjavaweb.anotation.Column;
 import com.laptrinhjavaweb.anotation.Table;
 import com.laptrinhjavaweb.mapper.ResultSetMapper;
 import com.laptrinhjavaweb.repository.EntityManagerFactory;
@@ -159,7 +159,7 @@ public class SimpleJPARepository<T> implements JPARepository<T> {
 				fields.append(",");
 				params.append(",");
 			}
-			Colum colum = field.getAnnotation(Colum.class);
+			Column colum = field.getAnnotation(Column.class);
 			fields.append(colum.name());
 			params.append("?");
 		}

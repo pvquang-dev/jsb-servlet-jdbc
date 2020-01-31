@@ -1,32 +1,17 @@
 package com.laptrinhjavaweb;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import com.laptrinhjavaweb.dto.CategoryDTO;
-import com.laptrinhjavaweb.dto.NewDTO;
-import com.laptrinhjavaweb.service.CategoryService;
-import com.laptrinhjavaweb.service.NewService;
-import com.laptrinhjavaweb.service.impl.CategoryServiceImpl;
-import com.laptrinhjavaweb.service.impl.NewServiceImpl;
-
 public class EstateApplication {
 	
 	public static void main(String[] args) {
-		CategoryService categoryService = new CategoryServiceImpl();
-		CategoryDTO dto= new CategoryDTO();
-		dto.setCode("code");
-		dto.setName("name");
-		categoryService.insert(dto);
-		
-		NewService newService = new NewServiceImpl();		
-		NewDTO newdto = new NewDTO();
-		newdto.setCategoryId(1L);
-		newdto.setContent("content");
-		newdto.setShortdescription("shortdecription");
-		newdto.setThumbnail("thumbnail");
-		newdto.setTitle("title");
-		newService.insert(newdto);
-		List<?> lst = new ArrayList<>();
+		String name = "Tower";
+		String dictrict = "QUAN_1";
+		String ward = "Phường 6";
+		String[] types = new String[] {"TANG_TRET", "NGUYEN_CAN"};
+		String rentAreaFrom = "300";
+		String rentAreaTo = "500";
+		String rentCostFrom = "1";
+		String rentCostTo = "2";
+		String numberofbasement = "2";
+		String floorArea = "500";
 	}
 }
