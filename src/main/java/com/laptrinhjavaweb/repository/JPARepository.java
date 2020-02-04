@@ -3,7 +3,8 @@ package com.laptrinhjavaweb.repository;
 import java.util.List;
 
 public interface JPARepository<T> {
-	List<T> findAll();
+	List<T> findAll(Object...where);
+	List<T> findAll(String sql, Object...where);
 	void insert(String sql, Object...objects); 
 	void insert(Object objects);
 }

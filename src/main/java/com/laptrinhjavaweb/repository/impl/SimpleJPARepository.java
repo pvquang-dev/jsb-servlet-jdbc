@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class SimpleJPARepository<T> implements JPARepository<T> {
 	}
 
 	@Override
-	public List<T> findAll() {
+	public List<T> findAll(Object... where) {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		ResultSetMapper<T> resultSetMapper = new ResultSetMapper<>();
@@ -40,8 +41,11 @@ public class SimpleJPARepository<T> implements JPARepository<T> {
 					Table table = clazz.getAnnotation(Table.class);
 					tableName = table.name();
 				}
-				String sql = "select * from " + tableName;
-				statement = connection.prepareStatement(sql);
+				StringBuilder sql = new StringBuilder("select * from " + tableName);
+				if (where != null && where.length == 1) {
+					sql.append(where[0]);
+				}
+				statement = connection.prepareStatement(sql.toString());
 				resultSet = statement.executeQuery();
 				return resultSetMapper.mapRow(resultSet, this.clazz);
 			} catch (SQLException e) {
@@ -163,7 +167,46 @@ public class SimpleJPARepository<T> implements JPARepository<T> {
 			fields.append(colum.name());
 			params.append("?");
 		}
-		String sql = "insert into " + tableName + "(" + fields.toString() + ") values(" + params.toString() + ")";;
+		String sql = "insert into " + tableName + "(" + fields.toString() + ") values(" + params.toString() + ")";
+		;
 		return sql;
+	}
+
+	@Override
+	public List<T> findAll(String sql, Object... where) {
+		Statement statement = null;
+		ResultSet resultSet = null;
+		ResultSetMapper<T> resultSetMapper = new ResultSetMapper<>();
+		Connection connection = EntityManagerFactory.getConnection();
+		if (connection != null) {
+			try {
+				StringBuilder buider = new StringBuilder(sql);
+				if (where != null && where.length == 1) {
+					buider.append(where[0]);
+				}
+				//statement = connection.prepareStatement(buider.toString());
+				statement = connection.createStatement();
+				//resultSet = statement.executeQuery();
+				resultSet = statement.executeQuery(sql);
+				return resultSetMapper.mapRow(resultSet, this.clazz);
+			} catch (SQLException e) {
+				return null;
+			} finally {
+				try {
+					if (connection != null) {
+						connection.close();
+					}
+					if (statement != null) {
+						statement.close();
+					}
+					if (resultSet != null) {
+						resultSet.close();
+					}
+				} catch (Exception e2) {
+					return null;
+				}
+			}
+		}
+		return new ArrayList<>();
 	}
 }
