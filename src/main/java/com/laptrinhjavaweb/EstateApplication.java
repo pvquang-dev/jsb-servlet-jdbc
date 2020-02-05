@@ -1,6 +1,9 @@
 package com.laptrinhjavaweb;
 
+import java.util.List;
+
 import com.laptrinhjavaweb.buider.BuildingSearch;
+import com.laptrinhjavaweb.dto.BuildingDTO;
 import com.laptrinhjavaweb.service.BuildingService;
 import com.laptrinhjavaweb.service.impl.BuildingServiceImpl;
 
@@ -27,5 +30,7 @@ public class EstateApplication {
 		
 		BuildingService buildingService = new BuildingServiceImpl();
 		buildingService.findAll(search);
+		List<BuildingDTO> result = buildingService.findAll(search);
+		System.out.println(result);
 	}
 }

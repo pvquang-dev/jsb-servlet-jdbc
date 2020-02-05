@@ -10,6 +10,9 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
+import org.apache.commons.lang.StringUtils;
 
 import com.laptrinhjavaweb.anotation.Column;
 import com.laptrinhjavaweb.anotation.Table;
@@ -29,7 +32,7 @@ public class SimpleJPARepository<T> implements JPARepository<T> {
 	}
 
 	@Override
-	public List<T> findAll(Object... where) {
+	public List<T> findAll(Map<String, Object> params, Object... where) {
 		PreparedStatement statement = null;
 		ResultSet resultSet = null;
 		ResultSetMapper<T> resultSetMapper = new ResultSetMapper<>();
@@ -41,7 +44,8 @@ public class SimpleJPARepository<T> implements JPARepository<T> {
 					Table table = clazz.getAnnotation(Table.class);
 					tableName = table.name();
 				}
-				StringBuilder sql = new StringBuilder("select * from " + tableName);
+				StringBuilder sql = new StringBuilder("select * from " + tableName+" tableName where 1 = 1");
+				sql = createSQLfindAllCommon(sql, params);
 				if (where != null && where.length == 1) {
 					sql.append(where[0]);
 				}
@@ -67,6 +71,31 @@ public class SimpleJPARepository<T> implements JPARepository<T> {
 			}
 		}
 		return new ArrayList<>();
+	}
+
+	protected StringBuilder createSQLfindAllCommon(StringBuilder sql, Map<String, Object> params) {
+		if(params != null && params.size() > 0) {
+			String[] keys = new String[params.size()];
+			Object[] values = new Object[]{};
+			int i = 0;
+			for(Map.Entry<String, Object> item : params.entrySet()) {
+				keys[i] = item.getKey();
+				values[i] = item.getValue();
+				i++;
+			}
+			for(int index = 0; index < keys.length; index++) {
+				if(StringUtils.isNotBlank(values[index].toString())) {
+					if(values[index] instanceof String) {
+						sql.append(" and tableName."+keys[index]+" like '%"+ values[index]+"%'");
+					}
+				} else {
+					if(values[index] != null) {
+						sql.append(" and tableName."+keys[index]+" = "+values[index]+"");
+					}
+				}
+			}
+		}
+		return sql;
 	}
 
 	@Override
@@ -184,9 +213,7 @@ public class SimpleJPARepository<T> implements JPARepository<T> {
 				if (where != null && where.length == 1) {
 					buider.append(where[0]);
 				}
-				//statement = connection.prepareStatement(buider.toString());
 				statement = connection.createStatement();
-				//resultSet = statement.executeQuery();
 				resultSet = statement.executeQuery(sql);
 				return resultSetMapper.mapRow(resultSet, this.clazz);
 			} catch (SQLException e) {

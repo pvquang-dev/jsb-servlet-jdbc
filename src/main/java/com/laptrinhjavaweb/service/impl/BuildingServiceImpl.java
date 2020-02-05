@@ -5,6 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.StringUtils;
+
 import com.laptrinhjavaweb.buider.BuildingSearch;
 import com.laptrinhjavaweb.converter.BuildingConverter;
 import com.laptrinhjavaweb.dto.BuildingDTO;
@@ -19,31 +21,26 @@ public class BuildingServiceImpl implements BuildingService {
 	private BuildingConverter convert = new BuildingConverter();
 
 	@Override
-	public List<BuildingDTO> findAll() {
-		List<BuildingDTO> lstNew = new ArrayList<>();
-		List<BuildingEntity> entities = newRepository.findAll();
-		for (BuildingEntity newEntity : entities) {
-			BuildingDTO newdto = convert.convertEntityToDTO(newEntity);
-			lstNew.add(newdto);
-		}
-		return lstNew;
-	}
-
-	@Override
 	public void insert(BuildingDTO newdto) {
 		newRepository.insert(convert.convertDTOToEntity(newdto));
 	}
 
 	@Override
 	public List<BuildingDTO> findAll(BuildingSearch buildingSearch) {
+		List<BuildingDTO> results = new ArrayList<>(); 
 		Map<String, Object> params = new HashMap<>();
 		params.put("name", buildingSearch.getName());
 		params.put("dictrict", buildingSearch.getDictrict());
-		params.put("floorarea", buildingSearch.getFloorArea() != null ? Integer.parseInt(buildingSearch.getFloorArea())
-				: buildingSearch.getFloorArea());
+		params.put("floorarea", (StringUtils.isNotBlank(buildingSearch.getFloorArea())) ? Integer.parseInt(buildingSearch.getFloorArea())
+				: null);
 		params.put("numberofbasement",
-				buildingSearch.getNumberofbasement() != null ? Integer.parseInt(buildingSearch.getNumberofbasement())
-						: buildingSearch.getNumberofbasement());
-		return null;
+				(StringUtils.isNotBlank(buildingSearch.getNumberofbasement())) ? Integer.parseInt(buildingSearch.getNumberofbasement())
+						: null);
+		List<BuildingEntity> entities =  newRepository.findAll(params, buildingSearch);
+		for (BuildingEntity item : entities) {
+			BuildingDTO dto = convert.convertEntityToDTO(item);
+			results.add(dto);
+		}
+		return results;
 	}
 }

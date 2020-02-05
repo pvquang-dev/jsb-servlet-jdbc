@@ -9,6 +9,5 @@ public interface BuildingService {
 	List<BuildingDTO> findAll(BuildingSearch buildingSearch);
 
 	void insert(BuildingDTO newdto);
-	
-	List<BuildingDTO> findAll();
+
 }
