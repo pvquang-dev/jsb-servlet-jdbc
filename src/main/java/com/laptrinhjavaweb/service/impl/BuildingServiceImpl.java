@@ -1,9 +1,10 @@
 package com.laptrinhjavaweb.service.impl;
 
-import java.util.ArrayList;
+import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import org.apache.commons.lang.StringUtils;
 
@@ -27,20 +28,44 @@ public class BuildingServiceImpl implements BuildingService {
 
 	@Override
 	public List<BuildingDTO> findAll(BuildingSearch buildingSearch) {
-		List<BuildingDTO> results = new ArrayList<>(); 
-		Map<String, Object> params = new HashMap<>();
-		params.put("name", buildingSearch.getName());
-		params.put("dictrict", buildingSearch.getDictrict());
-		params.put("floorarea", (StringUtils.isNotBlank(buildingSearch.getFloorArea())) ? Integer.parseInt(buildingSearch.getFloorArea())
-				: null);
-		params.put("numberofbasement",
-				(StringUtils.isNotBlank(buildingSearch.getNumberofbasement())) ? Integer.parseInt(buildingSearch.getNumberofbasement())
-						: null);
+		Map<String, Object> params = convertToMapProperties(buildingSearch);
+//		params.put("name", buildingSearch.getName());
+//		params.put("dictrict", buildingSearch.getDictrict());
+//		params.put("floorarea", (StringUtils.isNotBlank(buildingSearch.getFloorArea())) ? Integer.parseInt(buildingSearch.getFloorArea())
+//				: null);
+//		params.put("numberofbasement",
+//				(StringUtils.isNotBlank(buildingSearch.getNumberofbasement())) ? Integer.parseInt(buildingSearch.getNumberofbasement())
+//						: null);
+		
+		
 		List<BuildingEntity> entities =  newRepository.findAll(params, buildingSearch);
-		for (BuildingEntity item : entities) {
-			BuildingDTO dto = convert.convertEntityToDTO(item);
-			results.add(dto);
-		}
+		List<BuildingDTO> results = entities.stream().map(item -> convert.convertEntityToDTO(item)).collect(Collectors.toList());
+//		for (BuildingEntity item : entities) {
+//			BuildingDTO dto = convert.convertEntityToDTO(item);
+//			results.add(dto);
+//		}
 		return results;
+	}
+
+	private Map<String, Object> convertToMapProperties(BuildingSearch buildingSearch) {
+		Map<String, Object> properties = new HashMap<>();
+		try {
+			Field[] fields = BuildingSearch.class.getDeclaredFields();
+			for (Field field : fields) {
+				if(!field.getName().startsWith("rentarea")) {
+					field.setAccessible(true);
+					if(field.get(buildingSearch) instanceof String) {
+						properties.put(field.getName().toLowerCase(), field.get(buildingSearch));
+					} else {
+						if(field.get(buildingSearch) != null && StringUtils.isEmpty((String) field.get(buildingSearch))) {
+							properties.put(field.getName().toLowerCase(), Integer.parseInt((String) field.get(buildingSearch)));
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			System.out.println(e.getMessage());
+		}		
+		return null;
 	}
 }
