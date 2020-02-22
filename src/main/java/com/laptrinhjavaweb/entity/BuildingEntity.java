@@ -50,7 +50,7 @@ public class BuildingEntity extends BaseEntity {
 	@Column(name = "carcost")
 	private String carCost;
 	
-	@Column(name = "motorcost")
+	@Column(name = "motocost")
 	private String motorCost;
 	
 	@Column(name = "overtimecost")
@@ -59,7 +59,7 @@ public class BuildingEntity extends BaseEntity {
 	@Column(name = "type")
 	private String type;
 	
-	@Column(name = "electricbill")
+	@Column(name = "electricbuill")
 	private String electricBill;
 
 	@Column(name = "deposit")

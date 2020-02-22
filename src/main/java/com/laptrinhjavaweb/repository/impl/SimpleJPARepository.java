@@ -152,6 +152,16 @@ public class SimpleJPARepository<T> implements JPARepository<T> {
         statement.setObject(index, zfield.get(objects));
         index++;
       }
+      Class<?> parentClass = clazz.getSuperclass();
+      int indexParent = zclass.getDeclaredFields().length + 1;
+      while(parentClass != null) {
+        for (Field zfield : parentClass.getDeclaredFields()) {
+          zfield.setAccessible(true);
+          statement.setObject(indexParent, zfield.get(objects));
+          indexParent++;
+        }
+        parentClass = parentClass.getSuperclass();
+      }
       statement.executeUpdate();
       connection.commit();
     } catch (SQLException e) {
@@ -193,12 +203,28 @@ public class SimpleJPARepository<T> implements JPARepository<T> {
         fields.append(",");
         params.append(",");
       }
-      Column colum = field.getAnnotation(Column.class);
-      fields.append(colum.name());
-      params.append("?");
+      if(field.isAnnotationPresent(Column.class)) {
+        Column colum = field.getAnnotation(Column.class);
+        fields.append(colum.name());
+        params.append("?"); 
+      }
     }
-    String sql = "insert into "+tableName+" (" +fields.toString()+ ") values("
-        + params.toString() + ")";
+    Class<?> parentClass = clazz.getSuperclass();
+    while(parentClass != null) {
+      for (Field field : parentClass.getDeclaredFields()) {
+        if (fields.length() > 1) {
+          fields.append(",");
+          params.append(",");
+        }
+        if(field.isAnnotationPresent(Column.class)) {
+          Column colum = field.getAnnotation(Column.class);
+          fields.append(colum.name());
+          params.append("?"); 
+        }
+      }
+      parentClass = parentClass.getSuperclass();
+    }
+    String sql = "INSERT INTO "+tableName+"("+fields.toString()+") VALUES("+params.toString()+")";
     return sql;
   }
 
