@@ -7,8 +7,8 @@ import java.sql.SQLException;
 public class EntityManagerFactory {
 	public static Connection getConnection() {
 		try {
-			Class.forName("com.mysql.jdbc.Driver");
-			String url = "jdbc:mysql://localhost:3306/jspservlet";
+			Class.forName("com.mysql.cj.jdbc.Driver");
+			String url = "jdbc:mysql://localhost:3306/jspservlet122019";
 			String user = "root";
 			String password = "220996";
 			return DriverManager.getConnection(url, user, password);
